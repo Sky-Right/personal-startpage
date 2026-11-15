@@ -1,0 +1,12 @@
+{
+  "name": "personal-startpage",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server --bind 127.0.0.1 4173",
+    "build": "node scripts/build.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

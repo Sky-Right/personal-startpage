@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="system" data-wallpaper="mountains">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="SkyRight 个人导航，集中访问北化校园服务、AI 工具、学术科研与开发资源。">
+  <meta name="referrer" content="no-referrer">
+  <title>SkyRight</title>
+  <meta property="og:title" content="SkyRight">
+  <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
+  <link rel="preload" href="./assets/fonts/instrument-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <script>
+    let theme = 'system';
+    try {
+      const preferences = JSON.parse(localStorage.getItem('startpage.preferences'));
+      if (['system', 'light', 'dark'].includes(preferences?.theme)) theme = preferences.theme;
+      if (typeof preferences?.wallpaper === 'string') document.documentElement.dataset.wallpaper = preferences.wallpaper;
+    } catch {}
+    document.documentElement.dataset.theme = theme === 'system'
+      ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+      : theme;
+  </script>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#directory">跳到网站目录</a>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="./"><img src="./assets/mark.svg" alt="" width="32" height="32"><span lang="en">SkyRight</span></a>
+      <div class="header-actions">
+        <button class="icon-button" id="theme-toggle" type="button" aria-label="切换深浅主题" title="切换深浅主题">
+          <svg class="icon theme-sun" aria-hidden="true"><use href="./assets/ui.svg#sun"/></svg>
+          <svg class="icon theme-moon" aria-hidden="true"><use href="./assets/ui.svg#moon"/></svg>
+        </button>
+        <button class="icon-button" id="open-settings" type="button" aria-label="页面设置" title="页面设置" aria-haspopup="dialog">
+          <svg class="icon" aria-hidden="true"><use href="./assets/ui.svg#sliders-horizontal"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="sr-only"><span lang="en">SkyRight</span> 个人导航</h1>
+      <section class="hero" aria-label="时间与搜索">
+        <div class="hero-main">
+          <div class="clock">
+            <time id="clock-time"></time>
+            <time id="clock-date"></time>
+          </div>
+          <div class="search" id="search">
+            <form id="web-search" class="search-form" role="search" method="get" action="https://www.bing.com/search" target="_blank" rel="noopener noreferrer">
+              <label class="engine">
+                <img id="engine-icon" src="./assets/icons/bing.svg" width="17" height="17" alt="">
+                <span id="engine-label">Bing</span>
+                <svg class="icon" aria-hidden="true"><use href="./assets/ui.svg#caret-down"/></svg>
+                <select id="engine-select" aria-label="默认搜索引擎">
+                  <option value="bing">Bing</option>
+                  <option value="google">Google</option>
+                  <option value="baidu">百度</option>
+                </select>
+              </label>
+              <input id="query" aria-label="搜索网页或查找网站" aria-controls="site-results" name="q" type="search" placeholder="搜索网页或查找网站" autocomplete="off" enterkeyhint="search" required>
+              <button id="clear-query" class="search-clear" type="button" aria-label="清空搜索" hidden>
+                <svg class="icon" aria-hidden="true"><use href="./assets/ui.svg#x"/></svg>
+              </button>
+              <kbd class="search-key" title="按 / 或 Ctrl / ⌘ + K 聚焦搜索">/</kbd>
+              <button class="search-submit" type="submit" aria-label="搜索网页" title="搜索网页">
+                <svg class="icon" aria-hidden="true"><use href="./assets/ui.svg#magnifying-glass"/></svg>
+              </button>
+            </form>
+            <section id="site-results" class="site-results" aria-label="站内匹配" hidden>
+              <p class="result-caption" id="result-caption" role="status"></p>
+              <ul id="result-list" class="site-list"></ul>
+            </section>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true"><img id="wallpaper" alt="" decoding="async" fetchpriority="high"></div>
+      </section>
+
+      <section class="favorites" aria-labelledby="favorites-title" hidden>
+        <h2 id="favorites-title">
+          <svg class="icon" aria-hidden="true"><use href="./assets/ui.svg#push-pin"/></svg>
+          常用
+        </h2>
+        <ul class="site-list favorites-list" id="favorites"></ul>
+      </section>
+
+      <section class="directory" id="directory" aria-labelledby="directory-title" tabindex="-1">
+        <div class="directory-header">
+          <h2 id="directory-title">网站目录</h2>
+          <nav id="category-filters" class="category-filters" aria-label="网站分类"></nav>
+        </div>
+        <div class="groups" id="groups"></div>
+        <noscript><p>请启用 JavaScript 以查看网站目录。</p></noscript>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a id="photo-credit" target="_blank" rel="noopener noreferrer" hidden></a>
+    </footer>
+  </div>
+
+  <dialog id="settings" aria-labelledby="settings-title">
+    <div class="dialog-header">
+      <h2 id="settings-title">页面设置</h2>
+      <form method="dialog">
+        <button class="icon-button" type="submit" aria-label="关闭设置" autofocus>
+          <svg class="icon" aria-hidden="true"><use href="./assets/ui.svg#x"/></svg>
+        </button>
+      </form>
+    </div>
+    <fieldset>
+      <legend>主题</legend>
+      <div class="choices" id="theme-choices">
+        <label><input type="radio" name="theme" value="system"><span>跟随系统</span></label>
+        <label><input type="radio" name="theme" value="light"><span>浅色</span></label>
+        <label><input type="radio" name="theme" value="dark"><span>深色</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>背景</legend>
+      <div class="choices" id="wallpaper-choices"></div>
+    </fieldset>
+    <p class="settings-note" id="settings-note">设置保存在当前浏览器。</p>
+  </dialog>
+</body>
+</html>
