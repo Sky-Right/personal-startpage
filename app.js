@@ -3,7 +3,7 @@ import { categories, defaults, favorites, wallpapers } from './config.js';
 const engines = {
   bing: { name: 'Bing', url: 'https://www.bing.com/search', param: 'q' },
   google: { name: 'Google', url: 'https://www.google.com/search', param: 'q' },
-  baidu: { name: '百度', url: 'https://www.baidu.com/s', param: 'wd' },
+  baidu: { name: 'Baidu', url: 'https://www.baidu.com/s', param: 'wd' },
 };
 const sites = categories.flatMap(category => category.sites);
 const storageKey = 'startpage.preferences';
@@ -18,8 +18,12 @@ try {
   if (wallpapers.some(wallpaper => wallpaper.id === saved?.wallpaper)) preferences.wallpaper = saved.wallpaper;
   if (Object.hasOwn(engines, saved?.engine)) preferences.engine = saved.engine;
 } catch {
-  // 浏览器禁用存储时使用默认值。
+  // Use defaults when browser storage is unavailable.
 }
+
+const brandPhoto = byId('brand-photo');
+brandPhoto.addEventListener('error', () => { brandPhoto.hidden = true; });
+if (brandPhoto.complete && !brandPhoto.naturalWidth) brandPhoto.hidden = true;
 
 function savePreference(key, value) {
   preferences[key] = value;
@@ -27,7 +31,7 @@ function savePreference(key, value) {
     const { theme, wallpaper, engine } = preferences;
     localStorage.setItem(storageKey, JSON.stringify({ theme, wallpaper, engine }));
   } catch {
-    byId('settings-note').textContent = '浏览器存储不可用，设置仅在本次访问生效。';
+    byId('settings-note').textContent = 'Browser storage is unavailable. Changes apply to this visit.';
   }
 }
 
@@ -104,7 +108,7 @@ pinnedList.closest('section').hidden = pinned.length === 0;
 
 const groups = byId('groups');
 const filters = byId('category-filters');
-for (const category of [{ id: '', name: '全部' }, ...categories]) {
+for (const category of [{ id: '', name: 'All' }, ...categories]) {
   const filter = document.createElement('button');
   filter.type = 'button';
   filter.textContent = category.name;
@@ -141,7 +145,7 @@ filters.addEventListener('click', event => {
 const clock = byId('clock-time');
 const date = byId('clock-date');
 const clockFormat = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
-const weekdayFormat = new Intl.DateTimeFormat('zh-CN', { weekday: 'long' });
+const dateFormat = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
 let clockTimer;
 
 function updateClock() {
@@ -150,7 +154,7 @@ function updateClock() {
   clock.textContent = clock.dateTime = clockFormat.format(now);
   const month = now.getMonth() + 1;
   const day = now.getDate();
-  date.textContent = month + '月' + day + '日 · ' + weekdayFormat.format(now);
+  date.textContent = dateFormat.format(now);
   date.dateTime = [now.getFullYear(), month, day].map(value => String(value).padStart(2, '0')).join('-');
   if (!document.hidden) {
     clockTimer = setTimeout(updateClock, 60_000 - now.getTime() % 60_000);
@@ -197,8 +201,8 @@ function refreshResults() {
   const ranked = matches.sort((a, b) => Number(b.name.startsWith(value)) - Number(a.name.startsWith(value)));
   const visible = ranked.slice(0, 5);
   resultCaption.textContent = ranked.length
-    ? '站内匹配 · ' + (ranked.length > visible.length ? visible.length + ' / ' : '') + ranked.length + ' 个'
-    : '未找到匹配的网站';
+    ? 'Matching sites (' + (ranked.length > visible.length ? visible.length + ' of ' : '') + ranked.length + ')'
+    : 'No matching sites';
   resultList.replaceChildren(...visible.map(entry => makeSiteItem(entry.site, false)));
 }
 
@@ -267,7 +271,7 @@ const themeToggle = byId('theme-toggle');
 function applyTheme() {
   const dark = preferences.theme === 'system' ? systemTheme.matches : preferences.theme === 'dark';
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-  const label = dark ? '切换至浅色' : '切换至深色';
+  const label = dark ? 'Switch to light mode' : 'Switch to dark mode';
   themeToggle.title = label;
   themeToggle.setAttribute('aria-label', label);
   byId('theme-choices').querySelector('input[value="' + preferences.theme + '"]').checked = true;
@@ -301,7 +305,7 @@ function applyWallpaper() {
     input.checked = input.value === wallpaper.id;
   }
   if (wallpaper.image) {
-    wallpaperImage.sizes = '(max-width: 660px) calc(100vw - 34px), (max-width: 1200px) 70vw, 800px';
+    wallpaperImage.sizes = '100vw';
     wallpaperImage.srcset = wallpaper.srcset ?? '';
     wallpaperImage.src = wallpaper.image;
   } else {
@@ -310,7 +314,7 @@ function applyWallpaper() {
   }
   photoCredit.hidden = !wallpaper.credit || !wallpaper.source;
   if (!photoCredit.hidden) {
-    photoCredit.textContent = '摄影 · ' + wallpaper.credit;
+    photoCredit.textContent = 'Photography by ' + wallpaper.credit;
     photoCredit.href = wallpaper.source;
   }
 }

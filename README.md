@@ -1,6 +1,6 @@
 # SkyRight
 
-面向校园事务、AI 工具、科研和开发的个人导航。首屏聚合时间、搜索和 6 个常用网站。目录收录 30 个入口，按北化校园、AI 工具、学术科研、开发与实验、写作与效率、日常浏览分组。
+面向校园事务、AI 工具、科研和开发的个人导航。首屏聚合时间、搜索和 6 个常用网站。界面使用英文。目录收录 30 个入口，按 Campus、AI Tools、Research、Development、Productivity 和 Explore 分组。站内搜索也支持原有中文别名。
 
 ## 本地运行
 
@@ -59,11 +59,20 @@ python3 -m http.server --bind 127.0.0.1 --directory dist 4173
 
 将站点 URL 填入 Chrome 或 Edge 的启动页面设置，或 Safari 的主页设置。若要覆盖 Chrome 或 Edge 每次按新建标签页打开的默认页面，还需使用支持自定义 URL 的新标签页扩展。[Chrome 启动页设置](https://support.google.com/chrome/answer/95314) · [Microsoft 浏览器主页说明](https://support.microsoft.com/en-us/edge/change-your-browser-home-page)
 
+## 视觉规范
+
+- 字标用 Instrument Serif Italic，目录标题用同一字体的正体。控件、日期和网站名称用 Instrument Sans，时间使用等宽数字。
+- 浅色用雾蓝和暖白，深色用石板蓝和炭灰。山景从天空延伸到收藏区上方，经纵向遮罩融入纸面。内容区、分隔线和控件共用 [styles.css](./styles.css) 中的明暗色值。
+- 目录采用统一的 8px 间距节奏和 36px 图标容器，收藏图标为 40px。控件和面板分别用 8px 和 16px 圆角，阴影用于搜索框、搜索结果和设置面板。
+- 搜索、分类和链接都提供悬停和键盘焦点反馈。入场和背景使用有限次数的 CSS 动画。开启减少动态效果后，界面停止这些动画。
+
 ## 设计参考与资源许可
 
 - 青柠起始页提供首屏搜索和快捷访问的参考，Bonjourr 提供时钟与摄影的参考，nightTab 提供书签分组与背景定制的参考，Raycast 提供搜索快捷键与站点别名的参考。页面使用原生 HTML、CSS 和 JavaScript 实现，图标、字体和照片均随站点发布。[青柠起始页](https://limestart.cn/) · [Bonjourr](https://github.com/victrme/Bonjourr) · [nightTab](https://github.com/zombieFox/nightTab) · [Raycast Quicklinks](https://manual.raycast.com/quicklinks)
-- 首屏选用 Dmytro Koplyk 的阿巴拉契亚山景摄影，按显示宽度提供两种 WebP 尺寸。照片遵循 Unsplash License。[照片原页](https://unsplash.com/photos/ODcUS4Nqhjg) · [Unsplash License](https://unsplash.com/license)
-- 英文和数字使用 Instrument Sans，简体中文使用 Noto Sans SC 子集，后续加入的字符可由系统字体补齐。两套字体在站内提供，遵循 SIL OFL 1.1。[Instrument Sans](https://fontsource.org/fonts/instrument-sans/about) · [Noto Sans SC](https://fontsource.org/fonts/noto-sans-sc/about) · [Instrument Sans 许可](./assets/fonts/instrument-sans-OFL.txt) · [Noto Sans SC 许可](./assets/fonts/noto-sans-sc-OFL.txt)
+- 个人站点与摄影作品集方面，调研了 Craig Mod 的图文层级与 Alex Strohl Studio 以照片为主体的页面编排。[Craig Mod](https://craigmod.com/) · [Alex Strohl Studio](https://www.alexstrohl.com/)
+- 页面上部使用 Dmytro Koplyk 的阿巴拉契亚山景摄影，按设备分辨率提供 960px 和 2048px 两种 WebP 尺寸。照片遵循 Unsplash License。[照片原页](https://unsplash.com/photos/ODcUS4Nqhjg) · [Unsplash License](https://unsplash.com/license)
+- Instrument Serif 和 Instrument Sans 均在站内提供，遵循 SIL OFL 1.1。字标选择前以同一头像和字号对比了 Instrument Serif、Cormorant Garamond 与 Baskervville 的斜体。[Instrument Serif](https://fontsource.org/fonts/instrument-serif/about) · [Instrument Sans](https://fontsource.org/fonts/instrument-sans/about) · [随附字体许可](./assets/fonts/)
+- 个人头像取自 Sky-Right 的公开 GitHub 资料，随站点提供头像缩略图与 favicon。[Sky-Right](https://github.com/Sky-Right)
 - 山景进入时以单次 CSS 变换缓慢归位，交互反馈主要使用位移和透明度。视觉处理参考 Linear 的界面层级与 Apple 的动效建议，并调研了 simpleParallax.js、basicScroll 和 Motion 的实现。页面会遵循系统的减少动态效果偏好。[Linear 界面设计](https://linear.app/now/how-we-redesigned-the-linear-ui) · [Apple 动效指南](https://developer.apple.com/design/human-interface-guidelines/motion) · [simpleParallax.js](https://github.com/geosigno/simpleParallax.js) · [basicScroll](https://github.com/electerious/basicScroll) · [Motion](https://github.com/motiondivision/motion)
 - 线条图标来自 Phosphor Icons 2.1.1，遵循 MIT。AI 与部分应用品牌图标来自 LobeHub Icons 1.102.0，遵循 MIT。其余部分品牌来自 Simple Icons 16.37.0，项目使用 CC0，单个品牌的权利以品牌方声明为准。[Phosphor 许可](./assets/licenses/phosphor.txt) · [LobeHub 许可](./assets/licenses/lobe-icons.txt) · [Simple Icons 许可](./assets/licenses/simple-icons.txt) · [品牌使用声明](https://github.com/simple-icons/simple-icons/blob/develop/DISCLAIMER.md)
 - 北化官网、Web of Science、中国知网、Google Drive 和少数派使用对应网站发布的校徽或 favicon。品牌标识仅用于识别对应外部入口，权利归各品牌方所有。[北化校徽](https://www.buct.edu.cn/_upload/tpl/01/f4/500/template500/images/logo1.svg) · [Web of Science](https://www.webofscience.com/wos/static/favicon.png) · [中国知网](https://www.cnki.net/favicon.ico) · [Google Drive](https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png) · [少数派](https://cdn-static.sspai.com/favicon/sspai.ico)
