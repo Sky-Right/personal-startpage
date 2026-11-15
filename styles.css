@@ -377,7 +377,7 @@ h1, h2, h3 { text-wrap: balance; }
 }
 .group h3 .icon { width: 20px; height: 20px; color: var(--accent); }
 .group .site-link { height: 100%; padding-inline-end: 4px; }
-.group .site-name { white-space: normal; overflow-wrap: anywhere; }
+.favorites .site-name, .group .site-name { white-space: normal; overflow-wrap: anywhere; }
 .group .site-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
 .groups[data-filtered] .group { grid-column: 1 / -1; }
 .groups[data-filtered] .site-list { grid-template-columns: repeat(5, minmax(0, 1fr)); }
@@ -446,7 +446,7 @@ dialog legend { padding: 0; margin-bottom: 8px; color: var(--quiet); font-size: 
   :root[data-wallpaper="solid"] .hero { padding-block: 40px 56px; }
   .favorites { padding-bottom: 16px; }
   .directory-header { gap: 8px; padding-block: 16px 12px; }
-  .category-filters button { min-height: 44px; padding-inline: 8px; }
+  .category-filters button { min-width: 44px; min-height: 44px; padding-inline: 4px; }
   .groups { grid-template-columns: minmax(0, 1fr); }
   .group { padding-block: 16px; }
   .groups[data-filtered] .site-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
