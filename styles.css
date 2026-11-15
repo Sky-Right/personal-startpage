@@ -13,9 +13,8 @@
 }
 
 @font-face {
-  font-family: "Instrument Serif";
-  src: url("./assets/fonts/instrument-serif-italic.woff2") format("woff2");
-  font-style: italic;
+  font-family: "Pinyon Script";
+  src: url("./assets/fonts/pinyon-script.woff2") format("woff2");
   font-weight: 400;
   font-display: swap;
 }
@@ -24,6 +23,7 @@
   color-scheme: light;
   --sans: "Instrument Sans", system-ui, sans-serif;
   --serif: "Instrument Serif", Georgia, serif;
+  --script: "Pinyon Script", var(--serif);
   --paper: #f5f5ee;
   --sky: #e7eeeb;
   --surface: #fbfcf8;
@@ -123,9 +123,13 @@ h1, h2, h3 { text-wrap: balance; }
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  font: italic 400 2.25rem/2.5rem var(--serif);
-  letter-spacing: -.02em;
+  gap: 16px;
+  font: 400 3rem/3.5rem var(--script);
+}
+
+.brand, .favorites h2, .directory-header h2 {
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures contextual;
 }
 
 .avatar {
@@ -169,7 +173,7 @@ h1, h2, h3 { text-wrap: balance; }
   position: absolute;
   z-index: -1;
   inset: 80px 0 auto;
-  height: 464px;
+  height: 472px;
   overflow: hidden;
   pointer-events: none;
   opacity: var(--photo-opacity);
@@ -186,16 +190,23 @@ h1, h2, h3 { text-wrap: balance; }
   display: grid;
   justify-items: center;
   align-content: start;
-  gap: 20px;
-  min-height: 400px;
-  padding-top: 64px;
+  gap: 32px;
+  min-height: 408px;
+  padding-top: 48px;
 }
 
-:root[data-wallpaper="solid"] .hero { min-height: 0; padding-block: 64px 72px; }
-.clock { display: flex; align-items: center; justify-content: center; gap: 12px; }
-#clock-time { font-size: 1.25rem; line-height: 1.75rem; font-weight: 520; font-variant-numeric: tabular-nums; }
-#clock-date { order: 2; color: var(--quiet); font-size: .875rem; line-height: 1.25rem; }
-.clock::before { order: 1; width: 1px; height: 14px; background: currentColor; opacity: .25; content: ""; }
+:root[data-wallpaper="solid"] .hero { min-height: 0; padding-block: 48px 64px; }
+.clock { display: grid; justify-items: center; gap: 4px; }
+#clock-time {
+  font: 440 3rem/3.25rem var(--sans);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.035em;
+}
+#clock-date {
+  color: color-mix(in srgb, var(--ink) 65%, var(--quiet));
+  font-size: .875rem;
+  line-height: 1.25rem;
+}
 
 .search { position: relative; z-index: 2; width: min(100%, 680px); }
 .search-form {
@@ -288,8 +299,8 @@ h1, h2, h3 { text-wrap: balance; }
 .site-results { position: absolute; inset: calc(100% + 8px) 0 auto; padding: 8px; }
 .result-caption { padding: 4px 12px; color: var(--quiet); font-size: .875rem; }
 
-.favorites { padding: 8px 0 24px; }
-.favorites h2 { margin-bottom: 8px; color: var(--ink); font: 400 1.5rem/2rem var(--serif); }
+.favorites { padding: 8px 0 16px; }
+.favorites h2 { margin-bottom: 8px; color: var(--ink); font: 400 2.25rem/2.75rem var(--script); }
 .site-list { list-style: none; padding: 0; margin: 0; }
 .favorites-list { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
 .site-list > li { min-width: 0; }
@@ -341,14 +352,14 @@ h1, h2, h3 { text-wrap: balance; }
 .directory-header {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 16px 24px;
-  padding-block: 24px 16px;
+  padding-block: 16px;
   border-block: 1px solid var(--line);
 }
 
-.directory-header h2 { font: 400 2.25rem/2.5rem var(--serif); letter-spacing: -.018em; }
+.directory-header h2 { font: 400 3rem/3.5rem var(--script); }
 .category-filters { display: flex; flex-wrap: wrap; gap: 4px; }
 .category-filters button {
   flex: none;
@@ -438,14 +449,17 @@ dialog legend { padding: 0; margin-bottom: 8px; color: var(--quiet); font-size: 
 @media (max-width: 660px) {
   .shell { width: calc(100% - 32px); }
   .topbar { min-height: 72px; }
-  .brand { font-size: 1.875rem; line-height: 2.25rem; }
+  .brand { gap: 12px; font-size: 2.25rem; line-height: 2.75rem; }
   .avatar { width: 36px; height: 36px; }
-  .landscape { top: 64px; height: 351px; }
+  .landscape { top: 64px; height: 359px; }
   .landscape img { object-position: 52% 56%; }
-  .hero { min-height: 304px; padding-top: 48px; gap: 16px; }
-  :root[data-wallpaper="solid"] .hero { padding-block: 40px 56px; }
-  .favorites { padding-bottom: 16px; }
-  .directory-header { gap: 8px; padding-block: 16px 12px; }
+  .hero { min-height: 312px; padding-top: 36px; gap: 24px; }
+  :root[data-wallpaper="solid"] .hero { padding-block: 36px 48px; }
+  #clock-time { font-size: 2.25rem; line-height: 2.5rem; }
+  .favorites { padding-bottom: 8px; }
+  .favorites h2 { font-size: 2rem; line-height: 2.5rem; }
+  .directory-header { gap: 8px; padding-block: 12px; }
+  .directory-header h2 { font-size: 2.25rem; line-height: 2.75rem; }
   .category-filters button { min-width: 44px; min-height: 44px; padding-inline: 4px; }
   .groups { grid-template-columns: minmax(0, 1fr); }
   .group { padding-block: 16px; }
@@ -458,11 +472,13 @@ dialog legend { padding: 0; margin-bottom: 8px; color: var(--quiet); font-size: 
   .engine { grid-template-columns: 16px 12px; gap: 4px; padding-inline: 8px; }
   #query::placeholder { font-size: .875rem; }
   .favorites-list { gap: 4px; }
-  .favorites .site-link { flex-direction: column; gap: 4px; text-align: center; }
+  .favorites .site-link { flex-direction: column; gap: 4px; padding-block: 4px; text-align: center; }
   .favorites .site-label { width: 100%; }
   .favorites .site-name, .group .site-name { font-size: .875rem; }
 }
 
 @media (max-width: 355px) {
+  .brand { gap: 8px; font-size: 1.875rem; line-height: 2.25rem; }
+  .avatar { width: 32px; height: 32px; }
   .site-link { padding-inline: 4px; gap: 4px; }
 }
