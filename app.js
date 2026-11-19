@@ -1,11 +1,17 @@
-import { categories, defaults, favorites, wallpapers } from './config.js';
+import { categories as defaultCategories, defaults, favorites, wallpapers } from './config.js';
+import { initializeManager } from './manager.js';
+import { siteLogo } from './logos.js';
 
 const engines = {
   bing: { name: 'Bing', url: 'https://www.bing.com/search', param: 'q' },
   google: { name: 'Google', url: 'https://www.google.com/search', param: 'q' },
   baidu: { name: 'Baidu', url: 'https://www.baidu.com/s', param: 'wd' },
 };
-const sites = categories.flatMap(category => category.sites);
+
+let categories = defaultCategories;
+let sites = categories.flatMap(category => category.sites);
+let selectedCategory = '';
+const favoriteOrder = id => favorites.includes(id) ? favorites.indexOf(id) : favorites.length;
 const storageKey = 'startpage.preferences';
 const systemTheme = matchMedia('(prefers-color-scheme: dark)');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -57,32 +63,7 @@ function makeSiteItem(site, showDetail = true) {
     link.rel = 'noopener noreferrer';
   }
 
-  const logo = document.createElement('span');
-  logo.className = 'site-logo';
-  logo.setAttribute('aria-hidden', 'true');
-  const showFallback = () => {
-    if (site.icon) {
-      logo.replaceChildren(makeIcon(site.icon));
-      return;
-    }
-    const initials = document.createElement('span');
-    initials.className = 'initials';
-    initials.textContent = Array.from(site.name.trim())[0]?.toUpperCase() ?? '·';
-    logo.replaceChildren(initials);
-  };
-  if (site.logo) {
-    const image = document.createElement('img');
-    image.alt = '';
-    image.width = 20;
-    image.height = 20;
-    image.decoding = 'async';
-    if (site.invert) image.dataset.invert = '';
-    image.addEventListener('error', showFallback, { once: true });
-    image.src = new URL(site.logo, new URL('./assets/icons/', import.meta.url)).href;
-    logo.append(image);
-  } else {
-    showFallback();
-  }
+  const logo = siteLogo(site);
 
   const label = document.createElement('span');
   label.className = 'site-label';
@@ -97,37 +78,61 @@ function makeSiteItem(site, showDetail = true) {
     label.append(detail);
   }
   link.append(logo, label);
-  item.append(link);
+  const edit = document.createElement('button');
+  edit.type = 'button';
+  edit.className = 'site-edit';
+  edit.dataset.editSite = site.id;
+  edit.setAttribute('aria-label', 'Edit ' + site.name);
+  if (document.body.classList.contains('is-managing')) link.tabIndex = -1;
+  item.append(link, edit);
   return item;
 }
 
-const pinned = favorites.map(id => sites.find(site => site.id === id)).filter(Boolean);
-const pinnedList = byId('favorites');
-pinnedList.append(...pinned.map(site => makeSiteItem(site, false)));
-pinnedList.closest('section').hidden = pinned.length === 0;
-
 const groups = byId('groups');
 const filters = byId('category-filters');
-for (const category of [{ id: '', name: 'All' }, ...categories]) {
-  const filter = document.createElement('button');
-  filter.type = 'button';
-  filter.textContent = category.name;
-  filter.dataset.category = category.id;
-  filter.setAttribute('aria-pressed', String(!category.id));
-  filters.append(filter);
-  if (!category.id) continue;
 
-  const group = document.createElement('section');
-  group.className = 'group';
-  group.dataset.category = category.id;
-  const title = document.createElement('h3');
-  title.textContent = category.name;
-  if (category.icon) title.prepend(makeIcon(category.icon));
-  const list = document.createElement('ul');
-  list.className = 'site-list';
-  list.append(...category.sites.map(site => makeSiteItem(site)));
-  group.append(title, list);
-  groups.append(group);
+function renderDirectory(next) {
+  categories = next;
+  sites = categories.flatMap(category => category.sites);
+  if (!categories.some(group => group.id === selectedCategory)) selectedCategory = '';
+  const pinned = sites.filter(site => site.favorite);
+  // Preserve the configured order for existing favorites.
+  pinned.sort((left, right) => favoriteOrder(left.id) - favoriteOrder(right.id));
+  const pinnedList = byId('favorites');
+  pinnedList.replaceChildren(...pinned.map(site => makeSiteItem(site, false)));
+  pinnedList.closest('section').hidden = pinned.length === 0;
+  filters.replaceChildren();
+  groups.replaceChildren();
+  groups.toggleAttribute('data-filtered', Boolean(selectedCategory));
+  for (const category of [{ id: '', name: 'All' }, ...categories]) {
+    const filter = document.createElement('button');
+    filter.type = 'button';
+    filter.textContent = category.name;
+    filter.dataset.category = category.id;
+    filter.setAttribute('aria-pressed', String(category.id === selectedCategory));
+    filters.append(filter);
+    if (!category.id) continue;
+    const group = document.createElement('section');
+    group.className = 'group';
+    group.dataset.category = category.id;
+    group.hidden = Boolean(selectedCategory && selectedCategory !== category.id);
+    const title = document.createElement('h3');
+    title.textContent = category.name;
+    if (category.icon) title.prepend(makeIcon(category.icon));
+    const list = document.createElement('ul');
+    list.className = 'site-list';
+    list.append(...category.sites.map(site => makeSiteItem(site)));
+    group.append(title, list);
+    if (!category.sites.length) {
+      const empty = document.createElement('p');
+      empty.className = 'empty-category';
+      empty.textContent = 'No websites yet. Use + to add one.';
+      group.append(empty);
+    }
+    groups.append(group);
+  }
+  if (query.value.trim() && document.activeElement === query) refreshResults();
+  else resultPanel.hidden = true;
 }
 
 filters.addEventListener('click', event => {
@@ -135,7 +140,7 @@ filters.addEventListener('click', event => {
   if (!filter || filter.getAttribute('aria-pressed') === 'true') return;
   filters.querySelector('[aria-pressed="true"]').setAttribute('aria-pressed', 'false');
   filter.setAttribute('aria-pressed', 'true');
-  const selected = filter.dataset.category;
+  const selected = selectedCategory = filter.dataset.category;
   groups.toggleAttribute('data-filtered', Boolean(selected));
   for (const group of groups.children) {
     group.hidden = Boolean(selected && group.dataset.category !== selected);
@@ -172,11 +177,7 @@ const resultPanel = byId('site-results');
 const resultCaption = byId('result-caption');
 const resultList = byId('result-list');
 const normalize = text => text.normalize('NFKC').toLowerCase().trim();
-const index = sites.map(site => ({
-  site,
-  name: normalize(site.name),
-  text: normalize([site.name, site.url, site.keywords, site.note].join(' ')),
-}));
+
 
 function applyEngine() {
   const engine = engines[preferences.engine];
@@ -197,6 +198,9 @@ function refreshResults() {
     return;
   }
   const words = value.split(/\s+/);
+  const index = sites.map(site => ({
+    site, name: normalize(site.name), text: normalize([site.name, site.url, site.keywords, site.note].join(' ')),
+  }));
   const matches = index.filter(entry => words.every(word => entry.text.includes(word)));
   const ranked = matches.sort((a, b) => Number(b.name.startsWith(value)) - Number(a.name.startsWith(value)));
   const visible = ranked.slice(0, 5);
@@ -257,7 +261,7 @@ search.addEventListener('keydown', event => {
 
 const settings = byId('settings');
 document.addEventListener('keydown', event => {
-  if (event.defaultPrevented || event.isComposing || settings.open || event.altKey || event.shiftKey) return;
+  if (event.defaultPrevented || event.isComposing || document.querySelector('dialog[open]') || event.altKey || event.shiftKey) return;
   const command = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k';
   const editing = event.target.closest?.('input, textarea, select, [contenteditable]');
   if (command || event.key === '/' && !editing && !event.metaKey && !event.ctrlKey) {
@@ -332,4 +336,15 @@ settings.addEventListener('change', event => {
     savePreference(name, value);
     applyWallpaper();
   }
+});
+
+initializeManager({
+  onChange: renderDirectory,
+  getPreferences: () => ({ theme: preferences.theme, wallpaper: preferences.wallpaper, engine: preferences.engine }),
+  applyPreferences: saved => {
+    for (const [key, value] of Object.entries(saved)) savePreference(key, value);
+    applyTheme();
+    applyWallpaper();
+    applyEngine();
+  },
 });

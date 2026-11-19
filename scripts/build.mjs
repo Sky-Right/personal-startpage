@@ -4,7 +4,7 @@ import { categories, defaults, favorites, wallpapers } from '../config.js';
 
 const root = new URL('../', import.meta.url);
 const resolve = path => new URL(path, root);
-const files = ['index.html', 'styles.css', 'app.js', 'config.js', 'assets'];
+const files = ['index.html', 'styles.css', 'app.js', 'config.js', 'catalog.js', 'logos.js', 'manager.js', 'assets'];
 const svg = await readFile(resolve('assets/ui.svg'), 'utf8');
 for (const file of ['index.html', 'styles.css']) {
   const contents = await readFile(resolve(file), 'utf8');

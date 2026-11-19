@@ -22,12 +22,26 @@ python3 -m http.server --bind 127.0.0.1 --directory dist 4173
 ## 日常使用
 
 - 按 `/`、`Ctrl + K` 或 `⌘ + K` 聚焦搜索。直接回车会使用选中的引擎搜索网页。按 `↓` 进入站内匹配，回车打开该网站，按 `Esc` 收起匹配列表。
-- 在搜索框左侧选 Bing、Google 或百度。设置面板可选跟随系统、浅色或深色，以及山景或纯色背景。选择保存在当前浏览器。
+- 在搜索框右侧选 Bing、Google 或百度。设置面板可选跟随系统、浅色或深色，以及山景或纯色背景。选择保存在当前浏览器。
 - 校外访问北化信息门户等校内业务时，先打开目录中的 WebVPN，再从其中进入对应服务。教务系统接入统一身份认证。查阅订阅文献时，可从图书馆首页选择资源，具体访问方式以图书馆说明为准。[北化 WebVPN 说明](https://vpn.buct.edu.cn/main.htm) · [在校外访问数字校园的校方说明](https://vpn.buct.edu.cn/2022/0928/c12807a172089/page.htm) · [图书馆校外访问说明](https://library.buct.edu.cn/jszc/list.htm)
 
-## 修改导航
+## 在网页中管理网站
 
-在 [config.js](./config.js) 中维护以下内容。
+点击 Directory 旁的 **+**，粘贴网址，确认名称和图标，选择分类后保存。可以新建分类、上传 PNG／JPG／WebP 图标，并勾选 **Show in Favorites**。上传图片会等比缩小到 128px，以图片字节存入 IndexedDB。
+
+在 **Settings → Manage websites** 中进入管理模式，点击条目编辑名称、网址、分类、图标和收藏状态。默认站点也支持编辑和删除。删除需要确认，点击 **Done** 退出管理模式。
+
+**Settings → Export data** 会下载包含网站修改、新分类、删除记录、上传图标和主题／搜索设置的 JSON 备份。**Import data** 先检查文件，再提供合并与替换选择。合并时备份中相同 ID 的条目生效，其余本地条目保留。替换会按备份恢复自定义内容和删除记录。两种模式都会应用备份中的主题、背景和搜索引擎设置。
+
+网站数据保存在当前浏览器中。换设备或清理浏览器数据前可先导出备份，在新浏览器导入。后续代码更新会继续合并默认配置与本地修改。多标签页保存使用 IndexedDB 事务读取最新数据，上传图标与对应网站同时保存。
+
+名称按内置站点或域名建议，支持手动修改。自动图标依次尝试网站根目录的 favicon、Apple Touch Icon、DuckDuckGo 和 Google 图标服务，最终显示名称首字。图标以跨域图片请求展示，公共服务收到的是域名。上传的图标在浏览器中处理和保存。[浏览器跨域规则](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS) · [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB)
+
+可运行 `npm test` 检查网址校验、默认配置合并及导入冲突处理。
+
+## 维护默认配置
+
+在 [config.js](./config.js) 中维护初始网站和默认设置。
 
 | 配置 | 修改方式 |
 | --- | --- |

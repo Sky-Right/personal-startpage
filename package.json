@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "python3 -m http.server --bind 127.0.0.1 4173",
-    "build": "node scripts/build.mjs"
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/check-catalog.mjs"
   },
   "engines": {
     "node": ">=22"

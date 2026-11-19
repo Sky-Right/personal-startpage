@@ -87,8 +87,15 @@
 
       <section class="directory" id="directory" aria-labelledby="directory-title" tabindex="-1">
         <div class="directory-header">
-          <h2 id="directory-title">Directory</h2>
+          <div class="directory-title">
+            <h2 id="directory-title">Directory</h2>
+            <button id="add-website" class="icon-button add-button" type="button" aria-label="Add website" title="Add website" aria-haspopup="dialog" disabled><span aria-hidden="true">+</span></button>
+          </div>
           <nav id="category-filters" class="category-filters" aria-label="Categories"></nav>
+        </div>
+        <div id="manage-bar" class="manage-bar" hidden>
+          <span>Select a website to edit it.</span>
+          <button id="done-managing" class="text-button" type="button">Done</button>
         </div>
         <div class="groups" id="groups"></div>
         <noscript><p>Enable JavaScript to see the directory.</p></noscript>
@@ -121,7 +128,82 @@
       <legend>Background</legend>
       <div class="choices" id="wallpaper-choices"></div>
     </fieldset>
+    <fieldset>
+      <legend>Websites</legend>
+      <button id="manage-websites" class="secondary-button" type="button" disabled>Manage websites</button>
+    </fieldset>
+    <fieldset>
+      <legend>Backup</legend>
+      <div class="backup-actions">
+        <button id="export-data" class="secondary-button" type="button" disabled>Export data</button>
+        <button id="import-data" class="secondary-button" type="button" disabled>Import data</button>
+        <input id="backup-file" type="file" accept=".json,application/json" hidden>
+      </div>
+    </fieldset>
     <p class="settings-note" id="settings-note">Settings are saved in this browser.</p>
   </dialog>
+  <dialog id="website-editor" aria-labelledby="editor-title">
+    <div class="dialog-header">
+      <h2 id="editor-title">Add website</h2>
+      <button class="icon-button" type="button" data-close-editor aria-label="Close website editor"><svg class="icon" aria-hidden="true"><use href="./assets/ui.svg#x"/></svg></button>
+    </div>
+    <form id="website-form" novalidate>
+      <fieldset id="editor-fields" class="editor-fields">
+        <label class="field-label" for="website-url">Website address</label>
+        <input id="website-url" class="text-input" type="text" inputmode="url" autocomplete="url" placeholder="example.com" required maxlength="2048" autofocus>
+        <label class="field-label" for="website-name">Name</label>
+        <input id="website-name" class="text-input" type="text" autocomplete="off" required maxlength="100">
+
+        <div class="logo-field">
+          <div id="logo-preview" class="logo-preview"></div>
+          <div class="logo-options">
+            <div class="backup-actions">
+              <label class="secondary-button upload-button">Upload logo<input id="website-logo" type="file" accept="image/png,image/jpeg,image/webp"></label>
+              <button id="automatic-logo" class="text-button" type="button">Use automatic</button>
+            </div>
+            <p id="logo-note" class="field-note" role="status">PNG, JPG, or WebP. Up to 6 MB.</p>
+          </div>
+        </div>
+
+        <label class="field-label" for="website-category">Category</label>
+        <select id="website-category" class="text-input"></select>
+        <label class="field-label" for="new-category" id="new-category-label" hidden>New category name</label>
+        <input id="new-category" class="text-input" type="text" placeholder="Category name" maxlength="60" hidden>
+        <label class="favorite-choice"><input id="website-favorite" type="checkbox">Show in Favorites</label>
+      </fieldset>
+      <p id="editor-error" class="form-error" role="alert" hidden></p>
+      <div id="delete-confirmation" class="delete-confirmation" hidden>
+        <p>Delete this website from your library?</p>
+        <div class="backup-actions">
+          <button id="confirm-delete" class="danger-button" type="button">Delete website</button>
+          <button id="cancel-delete" class="secondary-button" type="button">Keep website</button>
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button id="delete-website" class="text-button delete-button" type="button" hidden>Delete</button>
+        <div class="primary-actions">
+          <button class="secondary-button" type="button" data-close-editor>Cancel</button>
+          <button id="save-website" class="primary-button" type="submit">Add website</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="backup-dialog" aria-labelledby="backup-title">
+    <div class="dialog-header">
+      <h2 id="backup-title">Import data</h2>
+      <button id="cancel-import" class="icon-button" type="button" aria-label="Close import"><svg class="icon" aria-hidden="true"><use href="./assets/ui.svg#x"/></svg></button>
+    </div>
+    <p id="backup-summary" class="backup-summary"></p>
+    <fieldset class="import-choices">
+      <legend>How should this backup be applied?</legend>
+      <label><input type="radio" name="import-mode" value="merge" checked><span>Merge with this browser<small>Backup entries replace matching IDs. Other entries stay.</small></span></label>
+      <label><input type="radio" name="import-mode" value="replace"><span>Replace local customizations<small>Restore the backup's websites and deletions.</small></span></label>
+    </fieldset>
+    <p class="field-note">The backup's appearance and search settings will also be applied.</p>
+    <p id="import-error" class="form-error" role="alert" hidden></p>
+    <div class="dialog-actions primary-actions"><button id="confirm-import" class="primary-button" type="button">Import data</button></div>
+  </dialog>
+  <div id="library-status" class="library-status" role="status" hidden></div>
 </body>
 </html>
